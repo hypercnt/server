@@ -2,7 +2,8 @@ import express from 'express'
 import path from 'path'
 import serveStatic from 'serve-static'
 import bodyParser from 'body-parser'
-import render from './render'
+// see below.
+// import render from './render'
 
 import router from './router'
 
@@ -21,16 +22,21 @@ export const init = async (props = {}) => {
     protocol,
     actions,
     serve,
-    client,
+    // client, // will be needed by ssr
   } = Object.assign({}, defaultProps, props)
 
   const app = express()
 
-  app.get('/', render(client))
+  // not yet.
+  // @hyperapp/render needs jsx
+  // which would force us to babelify/rollup the server.
+  // since es6 modules in the form of mjs files are finally in testing
+  // not yet.
+  // app.get('/', render(client))
 
-  // app.use(serveStatic(serve, { index: ['index.html'] }))
+  app.use(serveStatic(serve, { index: ['index.html'] }))
 
-  app.use(bodyParser.urlencoded())
+  app.use(bodyParser.urlencoded({ extended: true }))
   app.use(bodyParser.json())
 
   app.use('/api', router({ actions }))
