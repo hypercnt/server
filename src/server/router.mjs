@@ -31,12 +31,27 @@ const init = ({ actions }) => {
 
   // define the home route
   router.get('/', (req, res) => {
-    res.redirect('/api/v0')
+    res.redirect('/v0')
   })
 
+  const flattenActions = (a) => {
+    const b = {}
+    Object.keys(a).forEach(k => {
+      const act = a[k]
+      if (typeof act === 'object') {
+        b[k] = flattenActions(a[k])
+      }
+      else if (typeof act === 'function') {
+        b[k] = 'action'
+      }
+    })
+
+    return b
+  }
+
   router.get('/v0', (req, res) => {
-    const actionNames = Object.keys(actions)
-    res.send(JSON.stringify(actionNames))
+    const actionNames = flattenActions(actions)
+    res.send(actionNames)
   })
 
   routeActions({ actions, router })
