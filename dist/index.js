@@ -3,8 +3,11 @@
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var ws = require('ws');
-var express = _interopDefault(require('express'));
+var fs = _interopDefault(require('fs'));
 var path = _interopDefault(require('path'));
+var hyperapp = require('hyperapp');
+var render = require('@hyperapp/render');
+var express = _interopDefault(require('express'));
 
 const mapActions = ({ actions, name }) => {
   let action = actions;
@@ -67,6 +70,26 @@ const init = async props => {
 
   console.log(`socket server listening on ${props.port}`);
   return server
+};
+
+const fp = path.join(process.cwd(), "src", "client", "public", "index.html");
+const html = fs.readFileSync(fp).toString();
+console.log({ html });
+
+const render$1 = props => (req, res) => {
+  console.log("start render");
+  const { client } = props;
+  res.type("text/html");
+  const [head, footer] = html.split("<div>Loading...</div>");
+  res.write(head);
+  const main = render.withRender(hyperapp.app)(client.state, client.actions, client.view);
+  const stream = main.toStream();
+  console.log({ main, s: main.toString() });
+  stream.pipe(res, { end: false });
+  stream.on("end", () => {
+    res.write(footer);
+    res.end();
+  });
 };
 
 const router = express.Router();
@@ -133,24 +156,17 @@ const defaultProps$1 = {
   actions: {},
   serve: [
     path.join(process.cwd(), "dist"),
-    path.join(process.cwd(), "src", "client", "public")
+    path.join(process.cwd(), "src", "client", "assets")
   ]
 };
 
-const init$2 = async (props = {}) => {
-  const finalProps = Object.assign({}, defaultProps$1, props);
-  const {
-    host,
-    port,
-    protocol,
-    actions,
-    serve
-    // client, // will be needed by ssr
-  } = finalProps;
+const init$2 = async (p = {}) => {
+  const props = Object.assign({}, defaultProps$1, p);
+  const { host, port, protocol, actions, serve, client } = props;
 
   const app = express();
 
-  console.log("server props:", finalProps);
+  console.log("Server props:", props);
 
   serve.forEach(s => app.use(express.static(s, { index: "index.html" })));
 
@@ -158,6 +174,7 @@ const init$2 = async (props = {}) => {
   app.use(express.json());
 
   app.use("/api", init$1({ actions }));
+  app.use(render$1(props));
 
   app.listen(port, () => console.log(`http server listening to ${port}`));
   return app
