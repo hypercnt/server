@@ -1,28 +1,37 @@
 {
-  "name": "hyperconnect",
+  "name": "hyperconnect-server",
   "version": "0.0.1",
-  "description": "connect your hyperapp to an action driven websocket/http server",
-  "main": "src/",
+  "description": "action driven websocket/http server that connects to your hyperapp",
+  "main": "dist/index.js",
+  "jsnext:main": "src/index.js",
   "author": "Jascha Ehrenreich <jascha@jaeh.at>",
   "license": "MIT",
+  "scripts": {
+    "format": "prettier --write '{src,test}/**/*.js'",
+    "format:check": "prettier --list-different 'src/*.js'",
+    "bundle": "rollup -c",
+    "check": "npm run format:check && npm t",
+    "build": "npm run check && npm run bundle",
+    "prepare": "npm run build",
+    "release": "npm run clean && npm i && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish"
+  },
+  "files": [
+    "src/**",
+    "dist/**"
+  ],
+  "prettier": {
+    "semi": false
+  },
   "dependencies": {
-    "@hyperapp/logger": "0.5.0",
-    "@hyperapp/render": "2.0.0",
-    "babel-preset-env": "^1.6.1",
-    "body-parser": "1.18.2",
-    "dotenv": "5.0.1",
     "express": "4.16.3",
-    "hyperapp": "1.2.0",
     "ws": "5.1.0"
   },
-  "babel": {
-    "presets": [
-      [
-        "env",
-        {
-          "modules": false
-        }
-      ]
-    ]
+  "devDependencies": {
+    "prettier": "1.11.1",
+    "rollup": "0.57.1",
+    "rollup-plugin-babel": "3.0.3",
+    "rollup-plugin-commonjs": "9.1.0",
+    "rollup-plugin-jsx": "1.0.3",
+    "rollup-plugin-node-resolve": "3.3.0"
   }
 }

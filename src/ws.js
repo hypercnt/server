@@ -2,62 +2,58 @@ let ws = {}
 
 export const cache = []
 export let open = false
-export let apiVersion = 'v0'
+export let apiVersion = "v0"
 
 let error = (...msg) => console.error(...msg)
 
-
-const stringify = (msg) => {
+const stringify = msg => {
   try {
-    if (typeof msg === 'string') {
+    if (typeof msg === "string") {
       msg = JSON.parse(msg)
     }
 
     msg[0] = `${apiVersion}.${msg[0]}`
 
     return JSON.stringify(msg)
-  }
-  catch (e) {
+  } catch (e) {
     error(e)
   }
 }
 
-const parse = (msg) => {
-  if (typeof msg !== 'string') {
+const parse = msg => {
+  if (typeof msg !== "string") {
     return msg
   }
 
   try {
     return JSON.parse(msg)
-  }
-  catch(e) {
+  } catch (e) {
     return msg
   }
 }
 
-const reactions = (actions) => ({
-  onmessage: (e) => {
-    if (e.data === 'Unknown Action') {
-      error('Unknown Action', e)
+const reactions = actions => ({
+  onmessage: e => {
+    if (e.data === "Unknown Action") {
+      error("Unknown Action", e)
       return
     }
 
     const [path, data] = parse(e.data)
     let action = actions
 
-    path.split('.').forEach(key => {
+    path.split(".").forEach(key => {
       const fnName = `${key}_done`
       const sub = action[fnName]
-      if (typeof sub === 'function') {
+      if (typeof sub === "function") {
         action = sub
         return
-      }
-      else {
+      } else {
         action = actions[key]
       }
     })
 
-    if (typeof action === 'function') {
+    if (typeof action === "function") {
       return action(data)
     }
   },
@@ -71,15 +67,15 @@ const reactions = (actions) => ({
   },
   close: () => {
     open = false
-  },
+  }
 })
 
 export const connect = (actions, options = {}) => {
   const host = options.host || location.hostname
   const port = options.port || location.port
-  const protocol = options.protocol || 'ws'
+  const protocol = options.protocol || "ws"
 
-  apiVersion = options.apiVersion || 'v0'
+  apiVersion = options.apiVersion || "v0"
   error = options.error || error
 
   ws = new WebSocket(`${protocol}://${host}:${port}`)
@@ -95,9 +91,6 @@ export const connect = (actions, options = {}) => {
   return ws
 }
 
-export const send = (msg) =>
-  open
-    ? ws.send(stringify(msg))
-    : cache.push(msg)
+export const send = msg => (open ? ws.send(stringify(msg)) : cache.push(msg))
 
 export default connect
