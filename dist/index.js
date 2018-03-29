@@ -195,4 +195,4 @@ const init$3 = async (props = {}) => {
 };
 
 module.exports = init$3;
-//# sourceMappingURL=server.js.map
+//# sourceMappingURL=index.js.map

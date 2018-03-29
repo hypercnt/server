@@ -10,7 +10,7 @@ const dev = env === 'development'
 module.exports = {
   input: 'src/index.js',
   output: {
-    file: 'dist/server.js',
+    file: 'dist/index.js',
     name: 'server',
     format: 'cjs',
     sourcemap: true,
