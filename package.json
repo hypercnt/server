@@ -10,6 +10,7 @@
     "format": "prettier --write '{src,test}/**/*.js'",
     "format:check": "prettier --list-different 'src/*.js'",
     "bundle": "rollup -c",
+    "dev": "rollup -c -w",
     "check": "npm run format:check && npm t",
     "build": "npm run check && npm run bundle",
     "prepare": "npm run build",
@@ -23,7 +24,9 @@
     "semi": false
   },
   "dependencies": {
+    "@hyperapp/render": "2.0.0",
     "express": "4.16.3",
+    "hyperapp": "1.2.5",
     "ws": "5.1.0"
   },
   "devDependencies": {

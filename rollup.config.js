@@ -15,7 +15,7 @@ module.exports = {
     format: 'cjs',
     sourcemap: true,
   },
-  external: ['ws', 'express', 'path'],
+  external: ['ws', 'express', 'path', 'fs', 'hyperapp', '@hyperapp/render'],
   // watch: env === 'development',
   plugins: [
     // enable jsx in hyperapp

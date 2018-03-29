@@ -1,9 +1,7 @@
 import express from "express"
 import path from "path"
 
-// see below.
-// import render from './render'
-
+import render from "./render"
 import router from "./router"
 
 export const defaultProps = {
@@ -13,24 +11,17 @@ export const defaultProps = {
   actions: {},
   serve: [
     path.join(process.cwd(), "dist"),
-    path.join(process.cwd(), "src", "client", "public")
+    path.join(process.cwd(), "src", "client", "assets")
   ]
 }
 
-export const init = async (props = {}) => {
-  const finalProps = Object.assign({}, defaultProps, props)
-  const {
-    host,
-    port,
-    protocol,
-    actions,
-    serve
-    // client, // will be needed by ssr
-  } = finalProps
+export const init = async (p = {}) => {
+  const props = Object.assign({}, defaultProps, p)
+  const { host, port, protocol, actions, serve, client } = props
 
   const app = express()
 
-  console.log("server props:", finalProps)
+  console.log("Server props:", props)
 
   serve.forEach(s => app.use(express.static(s, { index: "index.html" })))
 
@@ -38,6 +29,7 @@ export const init = async (props = {}) => {
   app.use(express.json())
 
   app.use("/api", router({ actions }))
+  app.use(render(props))
 
   app.listen(port, () => console.log(`http server listening to ${port}`))
   return app
