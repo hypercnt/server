@@ -40,21 +40,28 @@ const init = async props => {
       } catch (err) {
         props.error(err);
       }
-      console.log("receive", msg);
+
+      const [name, body] = msg;
 
       const request = {
-        name: msg[0],
-        body: msg[1],
+        name,
+        body,
         client
       };
 
+      console.log("receive", name, body);
+
       const response = {
         send: data => {
-          console.log("send", { data });
-          if (typeof data !== "string" && typeof data !== "number") {
-            data = JSON.stringify(data);
+          const res = [name.replace("v0.", "")];
+
+          if (data) {
+            res.push(data);
           }
-          client.send(data);
+
+          console.log("send", res);
+
+          client.send(JSON.stringify(res));
         }
       };
 
@@ -74,17 +81,16 @@ const init = async props => {
 
 const fp = path.join(process.cwd(), "src", "client", "public", "index.html");
 const html = fs.readFileSync(fp).toString();
-console.log({ html });
+const [head, footer] = html.split("<div>Loading...</div>");
 
 const render$1 = props => (req, res) => {
-  console.log("start render");
-  const { client } = props;
   res.type("text/html");
-  const [head, footer] = html.split("<div>Loading...</div>");
   res.write(head);
+
+  const { client } = props;
   const main = render.withRender(hyperapp.app)(client.state, client.actions, client.view);
   const stream = main.toStream();
-  console.log({ main, s: main.toString() });
+
   stream.pipe(res, { end: false });
   stream.on("end", () => {
     res.write(footer);
@@ -166,9 +172,7 @@ const init$2 = async (p = {}) => {
 
   const app = express();
 
-  console.log("Server props:", props);
-
-  serve.forEach(s => app.use(express.static(s, { index: "index.html" })));
+  serve.forEach(p => app.use(express.static(p, { index: "index.html" })));
 
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());

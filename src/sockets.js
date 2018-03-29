@@ -21,21 +21,28 @@ export const init = async props => {
       } catch (err) {
         props.error(err)
       }
-      console.log("receive", msg)
+
+      const [name, body] = msg
 
       const request = {
-        name: msg[0],
-        body: msg[1],
+        name,
+        body,
         client
       }
 
+      console.log("receive", name, body)
+
       const response = {
         send: data => {
-          console.log("send", { data })
-          if (typeof data !== "string" && typeof data !== "number") {
-            data = JSON.stringify(data)
+          const res = [name.replace("v0.", "")]
+
+          if (data) {
+            res.push(data)
           }
-          client.send(data)
+
+          console.log("send", res)
+
+          client.send(JSON.stringify(res))
         }
       }
 
