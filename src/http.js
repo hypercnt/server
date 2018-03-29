@@ -21,9 +21,7 @@ export const init = async (p = {}) => {
 
   const app = express()
 
-  console.log("Server props:", props)
-
-  serve.forEach(s => app.use(express.static(s, { index: "index.html" })))
+  serve.forEach(p => app.use(express.static(p, { index: "index.html" })))
 
   app.use(express.urlencoded({ extended: true }))
   app.use(express.json())
