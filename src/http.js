@@ -4,6 +4,14 @@ import path from "path"
 import render from "./render"
 import router from "./router"
 
+// this is needed for ssr rendering.
+// if window is not set rendering will throw
+global.window = {
+  location: {
+    pathname: "/"
+  }
+}
+
 export const defaultProps = {
   host: "localhost",
   port: 3000,
@@ -27,6 +35,18 @@ export const init = async (p = {}) => {
   app.use(express.json())
 
   app.use("/api", router({ actions }))
+
+  app.use((req, res, next) => {
+    // this is needed for ssr rendering the hyperapp/router
+    global.window = {
+      location: {
+        pathname: req.path
+      }
+    }
+
+    next()
+  })
+
   app.use(render(props))
 
   app.listen(port, () => console.log(`http server listening to ${port}`))
