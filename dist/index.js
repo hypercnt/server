@@ -79,15 +79,22 @@ const init = async props => {
   return server
 };
 
-const fp = path.join(process.cwd(), "src", "client", "public", "index.html");
+const fp = path.join(process.cwd(), "src", "client", "index.html");
 const html = fs.readFileSync(fp).toString();
-const [head, footer] = html.split("<div>Loading...</div>");
+const splitPoint = "<body>";
+const [head, footer] = html.split(splitPoint);
 
 const render$1 = props => (req, res) => {
   res.type("text/html");
-  res.write(head);
+  res.write(head + splitPoint);
 
   const { client } = props;
+
+  // make the router render the correct view
+  client.state.location = {
+    pathname: req.path
+  };
+
   const main = render.withRender(hyperapp.app)(client.state, client.actions, client.view);
   const stream = main.toStream();
 
@@ -155,6 +162,14 @@ const init$1 = ({ actions }) => {
   return router
 };
 
+// this is needed for ssr rendering.
+// if window is not set rendering will throw
+global.window = {
+  location: {
+    pathname: "/"
+  }
+};
+
 const defaultProps$1 = {
   host: "localhost",
   port: 3000,
@@ -178,6 +193,18 @@ const init$2 = async (p = {}) => {
   app.use(express.json());
 
   app.use("/api", init$1({ actions }));
+
+  app.use((req, res, next) => {
+    // this is needed for ssr rendering the hyperapp/router
+    global.window = {
+      location: {
+        pathname: req.path
+      }
+    };
+
+    next();
+  });
+
   app.use(render$1(props));
 
   app.listen(port, () => console.log(`http server listening to ${port}`));
