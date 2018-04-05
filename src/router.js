@@ -4,7 +4,7 @@ import mapActions from "./mapActions"
 
 const router = express.Router()
 
-const routeActions = props => {
+export const routeActions = props => {
   const actions = {}
 
   Object.keys(props.actions).forEach(name => {
@@ -24,7 +24,7 @@ const routeActions = props => {
   })
 }
 
-const init = ({ actions }) => {
+export const init = ({ actions }) => {
   // middleware that is specific to this router
   router.use((req, res, next) => {
     console.log("Time: ", Date.now())
