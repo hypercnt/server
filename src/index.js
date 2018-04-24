@@ -6,6 +6,7 @@ const env = process.env.NODE_ENV || "development"
 const quiet = e => {
   console.error(e)
 }
+
 const loud = e => {
   if (e instanceof Error) {
     throw e

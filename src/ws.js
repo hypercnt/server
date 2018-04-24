@@ -91,6 +91,12 @@ export const connect = (actions, options = {}) => {
   return ws
 }
 
-export const send = msg => (open ? ws.send(stringify(msg)) : cache.push(msg))
+export const send = msg => {
+  if (open) {
+    ws.send(stringify(msg))
+  } else {
+    cache.push(msg)
+  }
+}
 
 export default connect

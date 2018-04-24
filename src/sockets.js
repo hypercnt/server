@@ -41,7 +41,7 @@ export const init = async props => {
 
           console.log("send", res)
 
-          client.send(JSON.stringify(res.filter(e => typeof e !== 'undefined')))
+          client.send(JSON.stringify(res.filter(e => typeof e !== "undefined")))
         }
       }
 
