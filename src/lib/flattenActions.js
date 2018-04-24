@@ -2,10 +2,10 @@ export const flattenActions = a => {
   const b = {}
   Object.keys(a).forEach(k => {
     const act = a[k]
-    if (typeof act === "object") {
+    if (typeof act === 'object') {
       b[k] = flattenActions(a[k])
-    } else if (typeof act === "function") {
-      b[k] = "action"
+    } else if (typeof act === 'function') {
+      b[k] = 'action'
     }
   })
 

@@ -30,7 +30,7 @@
     "ws": "5.1.1"
   },
   "devDependencies": {
-    "prettier": "1.11.1",
+    "@magic/test": "github:magic/test",
     "rollup": "0.57.1",
     "rollup-plugin-jsx": "1.0.3",
     "rollup-plugin-node-resolve": "3.3.0"

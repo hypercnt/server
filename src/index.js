@@ -1,7 +1,7 @@
-import HC_SOCKET, { defaultProps as wsDefaultProps } from "./sockets"
-import HC_HTTP, { defaultProps as httpDefaultProps } from "./http"
+import HC_SOCKET, { defaultProps as wsDefaultProps } from './sockets'
+import HC_HTTP, { defaultProps as httpDefaultProps } from './http'
 
-const env = process.env.NODE_ENV || "development"
+const env = process.env.NODE_ENV || 'development'
 
 const quiet = e => {
   console.error(e)
@@ -16,9 +16,9 @@ const loud = e => {
 }
 
 const defaultProps = {
-  error: env === "development" ? loud : quiet,
-  host: "localhost",
-  actions: {}
+  error: env === 'development' ? loud : quiet,
+  host: 'localhost',
+  actions: {},
 }
 
 const init = async (props = {}) => {

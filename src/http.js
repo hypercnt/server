@@ -1,26 +1,26 @@
-import express from "express"
-import path from "path"
+import express from 'express'
+import path from 'path'
 
-import render from "./render"
-import router from "./router"
+import render from './render'
+import router from './router'
 
 // this is needed for ssr rendering.
 // if window is not set rendering will throw
 global.window = {
   location: {
-    pathname: "/"
-  }
+    pathname: '/',
+  },
 }
 
 export const defaultProps = {
-  host: "localhost",
+  host: 'localhost',
   port: 3000,
-  protocol: "http",
+  protocol: 'http',
   actions: {},
   serve: [
-    path.join(process.cwd(), "dist"),
-    path.join(process.cwd(), "src", "client", "assets")
-  ]
+    path.join(process.cwd(), 'dist'),
+    path.join(process.cwd(), 'src', 'client', 'assets'),
+  ],
 }
 
 export const init = async (p = {}) => {
@@ -29,17 +29,17 @@ export const init = async (p = {}) => {
 
   const app = express()
 
-  serve.forEach(p => app.use(express.static(p, { index: "index.html" })))
+  serve.forEach(p => app.use(express.static(p, { index: 'index.html' })))
 
   app.use(express.urlencoded({ extended: true }))
   app.use(express.json())
 
-  app.use("/api", router({ actions }))
+  app.use('/api', router({ actions }))
 
   app.use((req, res, next) => {
     // this is needed for ssr rendering the hyperapp/router
     global.window.location = {
-      pathname: req.path
+      pathname: req.path,
     }
 
     next()
