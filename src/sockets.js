@@ -23,14 +23,13 @@ export const init = async props => {
       }
 
       const [name, body] = msg
+      console.log("receive", name, body)
 
       const request = {
         name,
         body,
         client
       }
-
-      console.log("receive", name, body)
 
       const response = {
         send: data => {
@@ -42,13 +41,17 @@ export const init = async props => {
 
           console.log("send", res)
 
-          client.send(JSON.stringify(res))
+          client.send(JSON.stringify(res.filter(e => typeof e !== 'undefined')))
         }
       }
 
       const action = mapActions({ actions: props.actions, name: request.name })
 
       if (typeof action === "function") {
+        if (props.db) {
+          response.db = props.db
+        }
+
         action(request, response)
       } else {
         client.send("Unknown Action")
