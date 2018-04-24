@@ -38,10 +38,8 @@ export const init = async (p = {}) => {
 
   app.use((req, res, next) => {
     // this is needed for ssr rendering the hyperapp/router
-    global.window = {
-      location: {
-        pathname: req.path
-      }
+    global.window.location = {
+      pathname: req.path
     }
 
     next()
