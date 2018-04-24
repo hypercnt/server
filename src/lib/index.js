@@ -1,2 +1,2 @@
-export flattenActions from './flattenActions'
-export mapActions from './mapActions'
+export { flattenActions } from './flattenActions'
+export { mapActions } from './mapActions'
