@@ -1,7 +1,7 @@
 import fs from "fs"
 import path from "path"
 
-import { h, app } from "hyperapp"
+import { app } from "hyperapp"
 import { withRender } from "@hyperapp/render"
 
 const fp = path.join(process.cwd(), "src", "client", "index.html")
@@ -15,9 +15,11 @@ export const render = props => (req, res) => {
 
   const { client } = props
 
+  const pathname = req.path
   // make the router render the correct view
   client.state.location = {
-    pathname: req.path
+    pathname,
+    prev: pathname
   }
 
   const main = withRender(app)(client.state, client.actions, client.view)
