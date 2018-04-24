@@ -1,6 +1,6 @@
 import * as ws from 'ws'
 
-import mapActions from './mapActions'
+import { mapActions } from './lib'
 
 const { Server } = ws
 
