@@ -9,11 +9,25 @@ var hyperapp = require('hyperapp');
 var render = require('@hyperapp/render');
 var express = _interopDefault(require('express'));
 
+const flattenActions = a => {
+  const b = {};
+  Object.keys(a).forEach(k => {
+    const act = a[k];
+    if (typeof act === 'object') {
+      b[k] = flattenActions(a[k]);
+    } else if (typeof act === 'function') {
+      b[k] = 'action';
+    }
+  });
+
+  return b
+};
+
 const mapActions = ({ actions, name }) => {
   let action = actions;
 
-  name.split(".").forEach(k => {
-    if (typeof action !== "function" && action[k]) {
+  name.split('.').forEach(k => {
+    if (typeof action !== 'function' && action[k]) {
       action = action[k];
     }
   });
@@ -24,17 +38,17 @@ const mapActions = ({ actions, name }) => {
 const { Server } = ws;
 
 const defaultProps = {
-  host: "localhost",
+  host: 'localhost',
   port: 3001,
-  protocol: "ws",
-  actions: {}
+  protocol: 'ws',
+  actions: {},
 };
 
 const init = async props => {
   const server = await new Server(props);
 
-  server.on("connection", client => {
-    client.on("message", msg => {
+  server.on('connection', client => {
+    client.on('message', msg => {
       try {
         msg = JSON.parse(msg);
       } catch (err) {
@@ -42,35 +56,38 @@ const init = async props => {
       }
 
       const [name, body] = msg;
+      console.log('receive', name, body);
 
       const request = {
         name,
         body,
-        client
+        client,
       };
-
-      console.log("receive", name, body);
 
       const response = {
         send: data => {
-          const res = [name.replace("v0.", "")];
+          const res = [name.replace('v0.', '')];
 
           if (data) {
             res.push(data);
           }
 
-          console.log("send", res);
+          console.log('send', res);
 
-          client.send(JSON.stringify(res));
-        }
+          client.send(JSON.stringify(res.filter(e => typeof e !== 'undefined')));
+        },
       };
 
       const action = mapActions({ actions: props.actions, name: request.name });
 
-      if (typeof action === "function") {
+      if (typeof action === 'function') {
+        if (props.db) {
+          response.db = props.db;
+        }
+
         action(request, response);
       } else {
-        client.send("Unknown Action");
+        client.send('Unknown Action');
       }
     });
   });
@@ -79,27 +96,29 @@ const init = async props => {
   return server
 };
 
-const fp = path.join(process.cwd(), "src", "client", "index.html");
+const fp = path.join(process.cwd(), 'src', 'client', 'index.html');
 const html = fs.readFileSync(fp).toString();
-const splitPoint = "<body>";
+const splitPoint = '<body>';
 const [head, footer] = html.split(splitPoint);
 
 const render$1 = props => (req, res) => {
-  res.type("text/html");
+  res.type('text/html');
   res.write(head + splitPoint);
 
   const { client } = props;
 
+  const pathname = req.path;
   // make the router render the correct view
   client.state.location = {
-    pathname: req.path
+    pathname,
+    prev: pathname,
   };
 
   const main = render.withRender(hyperapp.app)(client.state, client.actions, client.view);
   const stream = main.toStream();
 
   stream.pipe(res, { end: false });
-  stream.on("end", () => {
+  stream.on('end', () => {
     res.write(footer);
     res.end();
   });
@@ -107,19 +126,19 @@ const render$1 = props => (req, res) => {
 
 const router = express.Router();
 
-const routeActions = props => {
+const routeActions = (props = {}) => {
 
   Object.keys(props.actions).forEach(name => {
     const action = props.actions[name];
     const path$$1 = props.parent ? `${props.parent}/${name}` : `/${name}`;
 
-    if (typeof action === "object") {
+    if (typeof action === 'object') {
       routeActions({ parent: path$$1, actions: action, router });
     }
 
-    if (typeof action === "function") {
+    if (typeof action === 'function') {
       props.router.get(path$$1, (req, res) =>
-        res.end("GET not supported, use POST")
+        res.end('GET not supported, use POST'),
       );
       props.router.post(path$$1, action);
     }
@@ -127,32 +146,12 @@ const routeActions = props => {
 };
 
 const init$1 = ({ actions }) => {
-  // middleware that is specific to this router
-  router.use((req, res, next) => {
-    console.log("Time: ", Date.now());
-    next();
-  });
-
   // define the home route
-  router.get("/", (req, res) => {
-    res.redirect("/v0");
+  router.get('/', (req, res) => {
+    res.redirect('/v0');
   });
 
-  const flattenActions = a => {
-    const b = {};
-    Object.keys(a).forEach(k => {
-      const act = a[k];
-      if (typeof act === "object") {
-        b[k] = flattenActions(a[k]);
-      } else if (typeof act === "function") {
-        b[k] = "action";
-      }
-    });
-
-    return b
-  };
-
-  router.get("/v0", (req, res) => {
+  router.get('/v0', (req, res) => {
     const actionNames = flattenActions(actions);
     res.send(actionNames);
   });
@@ -166,19 +165,19 @@ const init$1 = ({ actions }) => {
 // if window is not set rendering will throw
 global.window = {
   location: {
-    pathname: "/"
-  }
+    pathname: '/',
+  },
 };
 
 const defaultProps$1 = {
-  host: "localhost",
+  host: 'localhost',
   port: 3000,
-  protocol: "http",
+  protocol: 'http',
   actions: {},
   serve: [
-    path.join(process.cwd(), "dist"),
-    path.join(process.cwd(), "src", "client", "assets")
-  ]
+    path.join(process.cwd(), 'dist'),
+    path.join(process.cwd(), 'src', 'client', 'assets'),
+  ],
 };
 
 const init$2 = async (p = {}) => {
@@ -187,19 +186,17 @@ const init$2 = async (p = {}) => {
 
   const app = express();
 
-  serve.forEach(p => app.use(express.static(p, { index: "index.html" })));
+  serve.forEach(p => app.use(express.static(p, { index: 'index.html' })));
 
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
 
-  app.use("/api", init$1({ actions }));
+  app.use('/api', init$1({ actions }));
 
   app.use((req, res, next) => {
     // this is needed for ssr rendering the hyperapp/router
-    global.window = {
-      location: {
-        pathname: req.path
-      }
+    global.window.location = {
+      pathname: req.path,
     };
 
     next();
@@ -211,11 +208,12 @@ const init$2 = async (p = {}) => {
   return app
 };
 
-const env = process.env.NODE_ENV || "development";
+const env = process.env.NODE_ENV || 'development';
 
 const quiet = e => {
   console.error(e);
 };
+
 const loud = e => {
   if (e instanceof Error) {
     throw e
@@ -225,9 +223,9 @@ const loud = e => {
 };
 
 const defaultProps$2 = {
-  error: env === "development" ? loud : quiet,
-  host: "localhost",
-  actions: {}
+  error: env === 'development' ? loud : quiet,
+  host: 'localhost',
+  actions: {},
 };
 
 const init$3 = async (props = {}) => {
