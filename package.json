@@ -7,9 +7,11 @@
   "author": "Jascha Ehrenreich <jascha@jaeh.at>",
   "license": "MIT",
   "scripts": {
+    "start": "t -p",
     "format": "f -w",
     "format:check": "f",
     "bundle": "rollup -c",
+    "test": "t",
     "dev": "rollup -c -w",
     "check": "npm run format:check && t -p",
     "build": "npm run check && t -p && npm run bundle",
