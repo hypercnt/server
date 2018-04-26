@@ -1,5 +1,5 @@
-import HC_SOCKET from './sockets'
-import HC_HTTP from './http'
+export { socket } from './sockets'
+export { http } from './http'
 
 const env = process.env.NODE_ENV || 'development'
 
@@ -28,7 +28,7 @@ const init = async (props = {}) => {
   return { socket, http }
 }
 
-init.socket = HC_SOCKET
-init.http = HC_HTTP
+init.socket = socket
+init.http = http
 
 export default init

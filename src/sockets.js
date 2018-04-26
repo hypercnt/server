@@ -11,7 +11,7 @@ export const defaultProps = {
   actions: {},
 }
 
-export const init = async props => {
+export const socket = async props => {
   const server = await new Server(props)
 
   server.on('connection', client => {
@@ -63,4 +63,4 @@ export const init = async props => {
   return server
 }
 
-export default init
+export default socket

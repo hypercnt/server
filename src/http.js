@@ -22,7 +22,7 @@ export const defaultProps = {
   ],
 }
 
-export const start = async (p = {}) => {
+export const http = async (p = {}) => {
   const props = Object.assign({}, defaultProps, p)
   const { host, port, protocol, actions, serve, client } = props
 
@@ -50,4 +50,4 @@ export const start = async (p = {}) => {
   return app
 }
 
-export default start
+export default http
