@@ -37,13 +37,6 @@ const mapActions = ({ actions, name }) => {
 
 const { Server } = ws;
 
-const defaultProps = {
-  host: 'localhost',
-  port: 3001,
-  protocol: 'ws',
-  actions: {},
-};
-
 const init = async props => {
   const server = await new Server(props);
 
@@ -145,7 +138,7 @@ const routeActions = (props = {}) => {
   });
 };
 
-const init$1 = ({ actions }) => {
+const routes = ({ actions }) => {
   // define the home route
   router.get('/', (req, res) => {
     res.redirect('/v0');
@@ -180,7 +173,7 @@ const defaultProps$1 = {
   ],
 };
 
-const init$2 = async (p = {}) => {
+const start = async (p = {}) => {
   const props = Object.assign({}, defaultProps$1, p);
   const { host, port, protocol, actions, serve, client } = props;
 
@@ -191,10 +184,10 @@ const init$2 = async (p = {}) => {
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
 
-  app.use('/api', init$1({ actions }));
+  app.use('/api', routes({ actions }));
 
   app.use((req, res, next) => {
-    // this is needed for ssr rendering the hyperapp/router
+    // this is needed for ssr rendering the hyperapp/routes
     global.window.location = {
       pathname: req.path,
     };
@@ -210,35 +203,15 @@ const init$2 = async (p = {}) => {
 
 const env = process.env.NODE_ENV || 'development';
 
-const quiet = e => {
-  console.error(e);
-};
-
-const loud = e => {
-  if (e instanceof Error) {
-    throw e
-  } else {
-    throw new Error(JSON.stringify(e))
-  }
-};
-
-const defaultProps$2 = {
-  error: env === 'development' ? loud : quiet,
-  host: 'localhost',
-  actions: {},
-};
-
-const init$3 = async (props = {}) => {
-  props = Object.assign({}, defaultProps$2, props);
-
-  const wsProps = Object.assign({}, defaultProps$2, defaultProps, props);
-  const httpProps = Object.assign({}, defaultProps$2, defaultProps$1, props);
-
-  const socket = await init(wsProps);
-  const http = await init$2(httpProps);
+const init$1 = async (props = {}) => {
+  const socket = await init(props);
+  const http = await start(props);
 
   return { socket, http }
 };
 
-module.exports = init$3;
+init$1.socket = init;
+init$1.http = start;
+
+module.exports = init$1;
 //# sourceMappingURL=index.js.map
