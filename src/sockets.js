@@ -1,8 +1,6 @@
-import * as ws from 'ws'
+import { Server } from 'ws'
 
 import { mapActions } from './lib'
-
-const { Server } = ws
 
 export const defaultProps = {
   host: 'localhost',
@@ -11,8 +9,9 @@ export const defaultProps = {
   actions: {},
 }
 
-export const socket = async props => {
-  const server = await new Server(props)
+export const socket = props => {
+  props = { ...defaultProps, ...props }
+  const server = new Server(props)
 
   server.on('connection', client => {
     client.on('message', msg => {

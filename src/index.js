@@ -11,21 +11,19 @@ const loud = e => {
   if (e instanceof Error) {
     throw e
   } else {
+    if (typeof e === 'string' || typeof e === 'number' || e instanceof Date) {
+      throw new Error(e)
+    }
+
     throw new Error(JSON.stringify(e))
   }
 }
 
-const defaultProps = {
-  error: env === 'development' ? loud : quiet,
-  host: 'localhost',
-  actions: {},
-}
-
 const init = async (props = {}) => {
-  const socket = await HC_SOCKET(props)
-  const http = await HC_HTTP(props)
+  const socketServer = await socket(props)
+  const httpServer = await http(props)
 
-  return { socket, http }
+  return { socket: socketServer, http: httpServer }
 }
 
 init.socket = socket

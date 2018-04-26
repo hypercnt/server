@@ -22,8 +22,8 @@ export const defaultProps = {
   ],
 }
 
-export const http = async (p = {}) => {
-  const props = Object.assign({}, defaultProps, p)
+export const http = (props = {}) => {
+  props = { ...defaultProps, ...props }
   const { host, port, protocol, actions, serve, client } = props
 
   const app = express()
