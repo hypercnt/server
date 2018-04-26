@@ -70,7 +70,7 @@ const reactions = actions => ({
   },
 })
 
-export const connect = (actions, options = {}) => {
+export const start = (actions, options = {}) => {
   const host = options.host || location.hostname
   const port = options.port || location.port
   const protocol = options.protocol || 'ws'
@@ -99,4 +99,4 @@ export const send = msg => {
   }
 }
 
-export default connect
+export default start

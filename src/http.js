@@ -1,8 +1,7 @@
 import express from 'express'
 import path from 'path'
 
-import render from './render'
-import router from './router'
+import { render, routes } from './middleware'
 
 // this is needed for ssr rendering.
 // if window is not set rendering will throw
@@ -23,7 +22,7 @@ export const defaultProps = {
   ],
 }
 
-export const init = async (p = {}) => {
+export const start = async (p = {}) => {
   const props = Object.assign({}, defaultProps, p)
   const { host, port, protocol, actions, serve, client } = props
 
@@ -34,10 +33,10 @@ export const init = async (p = {}) => {
   app.use(express.urlencoded({ extended: true }))
   app.use(express.json())
 
-  app.use('/api', router({ actions }))
+  app.use('/api', routes({ actions }))
 
   app.use((req, res, next) => {
-    // this is needed for ssr rendering the hyperapp/router
+    // this is needed for ssr rendering the hyperapp/routes
     global.window.location = {
       pathname: req.path,
     }
@@ -51,4 +50,4 @@ export const init = async (p = {}) => {
   return app
 }
 
-export default init
+export default start

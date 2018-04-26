@@ -1,5 +1,5 @@
-import HC_SOCKET, { defaultProps as wsDefaultProps } from './sockets'
-import HC_HTTP, { defaultProps as httpDefaultProps } from './http'
+import HC_SOCKET from './sockets'
+import HC_HTTP from './http'
 
 const env = process.env.NODE_ENV || 'development'
 
@@ -22,15 +22,13 @@ const defaultProps = {
 }
 
 const init = async (props = {}) => {
-  props = Object.assign({}, defaultProps, props)
-
-  const wsProps = Object.assign({}, defaultProps, wsDefaultProps, props)
-  const httpProps = Object.assign({}, defaultProps, httpDefaultProps, props)
-
-  const socket = await HC_SOCKET(wsProps)
-  const http = await HC_HTTP(httpProps)
+  const socket = await HC_SOCKET(props)
+  const http = await HC_HTTP(props)
 
   return { socket, http }
 }
+
+init.socket = HC_SOCKET
+init.http = HC_HTTP
 
 export default init

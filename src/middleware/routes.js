@@ -1,10 +1,10 @@
 import express from 'express'
 
-import { flattenActions, mapActions } from './lib'
+import { flattenActions, mapActions } from '../lib'
 
 const router = express.Router()
 
-export const routeActions = (props = {}) => {
+const routeActions = (props = {}) => {
   const actions = {}
 
   Object.keys(props.actions).forEach(name => {
@@ -24,7 +24,7 @@ export const routeActions = (props = {}) => {
   })
 }
 
-export const init = ({ actions }) => {
+export const routes = ({ actions }) => {
   // define the home route
   router.get('/', (req, res) => {
     res.redirect('/v0')
@@ -40,4 +40,4 @@ export const init = ({ actions }) => {
   return router
 }
 
-export default init
+export default routes
