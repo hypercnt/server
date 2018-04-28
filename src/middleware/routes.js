@@ -16,9 +16,7 @@ const routeActions = (props = {}) => {
     }
 
     if (typeof action === 'function') {
-      props.router.get(path, (req, res) =>
-        res.end('GET not supported, use POST'),
-      )
+      props.router.get(path, (req, res) => res.end('GET not supported, use POST'))
       props.router.post(path, action)
     }
   })

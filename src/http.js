@@ -21,10 +21,7 @@ export const defaultProps = {
   port: 3000,
   protocol: 'http',
   actions: {},
-  serve: [
-    path.join(process.cwd(), 'dist'),
-    path.join(process.cwd(), 'src', 'client', 'assets'),
-  ],
+  serve: [path.join(process.cwd(), 'dist'), path.join(process.cwd(), 'src', 'client', 'assets')],
 }
 
 export const http = (props = {}) => {
