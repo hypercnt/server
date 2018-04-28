@@ -11,6 +11,11 @@ global.window = {
   },
 }
 
+global.history = {
+  pushState: () => {},
+  replaceState: () => {},
+}
+
 export const defaultProps = {
   host: 'localhost',
   port: 3000,
