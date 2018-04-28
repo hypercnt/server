@@ -1,6 +1,8 @@
 import express from 'express'
 import path from 'path'
 
+import log from '@magic/log'
+
 import { render, routes } from './middleware'
 
 // this is needed for ssr rendering.
@@ -48,7 +50,7 @@ export const http = (props = {}) => {
 
   app.use(render(props))
 
-  app.listen(port, () => console.log(`http server listening to ${port}`))
+  app.listen(port, () => log.info(`http server listening to ${port}`))
   return app
 }
 

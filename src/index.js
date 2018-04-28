@@ -1,10 +1,12 @@
+import log from '@magic/log'
+
 export { socket } from './sockets'
 export { http } from './http'
 
 const env = process.env.NODE_ENV || 'development'
 
 const quiet = e => {
-  console.error(e)
+  log.error(e)
 }
 
 const loud = e => {

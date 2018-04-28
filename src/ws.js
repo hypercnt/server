@@ -1,10 +1,12 @@
+import log from '@magic/log'
+
 let ws = {}
 
 export const cache = []
 export let open = false
 export let apiVersion = 'v0'
 
-let error = (...msg) => console.error(...msg)
+let error = (...msg) => log.error(...msg)
 
 const stringify = msg => {
   try {

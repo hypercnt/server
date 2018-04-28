@@ -1,5 +1,7 @@
 import { Server } from 'ws'
 
+import log from '@magic/log'
+
 import { mapActions } from './lib'
 
 export const defaultProps = {
@@ -22,7 +24,7 @@ export const socket = props => {
       }
 
       const [name, body] = msg
-      console.log('receive', name, body)
+      log.info('receive', name, body)
 
       const request = {
         name,
@@ -38,7 +40,7 @@ export const socket = props => {
             res.push(data)
           }
 
-          console.log('send', res)
+          log.info('send', res)
 
           client.send(JSON.stringify(res.filter(e => typeof e !== 'undefined')))
         },
@@ -58,7 +60,7 @@ export const socket = props => {
     })
   })
 
-  console.log(`socket server listening on ${props.port}`)
+  log.info(`socket server listening on ${props.port}`)
   return server
 }
 
