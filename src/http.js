@@ -45,6 +45,13 @@ export const http = (props = {}) => {
       pathname: req.path,
     }
 
+    if (props.db) {
+      res.db = props.db
+    }
+    if (props.jwt) {
+      res.jwt = props.jwt
+    }
+
     next()
   })
 

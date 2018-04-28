@@ -52,6 +52,9 @@ export const socket = props => {
         if (props.db) {
           response.db = props.db
         }
+        if (props.jwt) {
+          response.jwt = props.jwt
+        }
 
         action(request, response)
       } else {
