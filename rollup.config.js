@@ -15,7 +15,16 @@ module.exports = {
     format: 'cjs',
     sourcemap: true,
   },
-  external: ['ws', 'express', 'path', 'fs', 'hyperapp', '@hyperapp/render'],
+  external: [
+    '@magic/log',
+    '@magic/deep',
+    'ws',
+    'express',
+    'path',
+    'fs',
+    'hyperapp',
+    '@hyperapp/render',
+  ],
   // watch: env === 'development',
   plugins: [
     // enable jsx in hyperapp
