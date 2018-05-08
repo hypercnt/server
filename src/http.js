@@ -2,6 +2,7 @@ import express from 'express'
 import path from 'path'
 
 import log from '@magic/log'
+import deep from '@magic/deep'
 
 import { render, routes } from './middleware'
 
@@ -19,16 +20,22 @@ global.history = {
 }
 
 export const defaultProps = {
-  host: 'localhost',
-  port: 3000,
-  protocol: 'http',
+  http: {
+    host: 'localhost',
+    port: 3000,
+    protocol: 'http',
+    serve: [path.join(process.cwd(), 'dist'), path.join(process.cwd(), 'src', 'client', 'assets')],
+  },
   actions: {},
-  serve: [path.join(process.cwd(), 'dist'), path.join(process.cwd(), 'src', 'client', 'assets')],
 }
 
 export const http = (props = {}) => {
-  props = { ...defaultProps, ...props }
-  const { host, port, protocol, actions, serve, client } = props
+  props = deep.merge(defaultProps, props)
+
+  console.log({ props })
+
+  const { actions, client } = props
+  const { host, port, protocol, serve } = props.http
 
   const app = express()
 
