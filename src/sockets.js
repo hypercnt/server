@@ -5,17 +5,19 @@ import log from '@magic/log'
 import { mapActions } from './lib'
 
 export const defaultProps = {
-  host: 'localhost',
-  port: 3001,
-  protocol: 'ws',
-  actions: {},
+  socket: {
+    host: 'localhost',
+    port: 3001,
+    protocol: 'ws',
+    actions: {},
+  },
 }
 
 export const socket = props => {
   props = { ...defaultProps, ...props }
-  const server = new Server(props)
+  const server = new Server(props.socket)
 
-  server.on('connection', client => {
+  server.on('connection', (client, req) => {
     client.on('message', msg => {
       try {
         msg = JSON.parse(msg)
@@ -24,12 +26,13 @@ export const socket = props => {
       }
 
       const [name, body] = msg
-      log.info('receive', name, body)
+      log.info('receive', name, body, req)
 
       const request = {
+        req,
         name,
-        body,
         client,
+        body,
       }
 
       const response = {
