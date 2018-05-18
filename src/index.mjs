@@ -1,15 +1,8 @@
-import log from '@magic/log'
-
-export { socket } from './sockets'
+export { socket } from './socket'
 export { http } from './http'
+import start from './init'
 
-const env = process.env.NODE_ENV || 'development'
-
-const init = async (props = {}) => {
-  const socketServer = await socket(props)
-  const httpServer = await http(props)
-
-  return { socket: socketServer, http: httpServer }
-}
+export const init = start
+init.init = start
 
 export default init

@@ -1,4 +1,4 @@
-import { Server } from 'ws'
+import ws from 'ws'
 
 import log from '@magic/log'
 
@@ -15,7 +15,7 @@ export const defaultProps = {
 
 export const socket = props => {
   props = { ...defaultProps, ...props }
-  const server = new Server(props.socket)
+  const server = new ws.Server(props.socket)
 
   server.on('connection', (client, req) => {
     client.on('message', msg => {

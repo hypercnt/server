@@ -32,8 +32,6 @@ export const defaultProps = {
 export const http = (props = {}) => {
   props = deep.merge(defaultProps, props)
 
-  console.log({ props })
-
   const { actions, client } = props
   const { host, port, protocol, serve } = props.http
 
