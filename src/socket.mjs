@@ -1,6 +1,7 @@
 import ws from 'ws'
 
 import log from '@magic/log'
+import deep from '@magic/deep'
 
 import { mapActions } from './lib'
 
