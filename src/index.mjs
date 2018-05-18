@@ -12,7 +12,4 @@ const init = async (props = {}) => {
   return { socket: socketServer, http: httpServer }
 }
 
-init.socket = socket
-init.http = http
-
 export default init
