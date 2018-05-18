@@ -60,7 +60,7 @@ export const http = (props = {}) => {
     next()
   })
 
-  app.use(render(props))
+  app.use(render(client))
 
   app.listen(port, () => log.info(`http server listening to ${port}`))
   return app

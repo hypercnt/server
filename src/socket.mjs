@@ -13,16 +13,16 @@ export const defaultProps = {
   },
 }
 
-export const socket = props => {
-  props = { ...defaultProps, ...props }
-  const server = new ws.Server(props.socket)
+export const socket = args => {
+  const { actions, socket: conf } = deep.merge(defaultProps, args)
+  const server = new ws.Server(conf)
 
   server.on('connection', (client, req) => {
     client.on('message', msg => {
       try {
         msg = JSON.parse(msg)
       } catch (err) {
-        props.error(err)
+        log.error(err)
       }
 
       const [name, body] = msg
@@ -49,14 +49,14 @@ export const socket = props => {
         },
       }
 
-      const action = mapActions({ actions: props.actions, name: request.name })
+      const action = mapActions({ actions: actions, name: request.name })
 
       if (typeof action === 'function') {
-        if (props.db) {
-          response.db = props.db
+        if (db) {
+          response.db = db
         }
-        if (props.jwt) {
-          response.jwt = props.jwt
+        if (jwt) {
+          response.jwt = jwt
         }
 
         action(request, response)
@@ -66,7 +66,7 @@ export const socket = props => {
     })
   })
 
-  log.info(`socket server listening on ${props.port}`)
+  log.info(`socket server listening on ${conf.port}`)
   return server
 }
 

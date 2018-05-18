@@ -14,13 +14,12 @@ const html = fs.readFileSync(fp).toString()
 const splitPoint = '<body>'
 const [head, footer] = html.split(splitPoint)
 
-export const render = props => (req, res) => {
+export const render = client => (req, res) => {
   res.type('text/html')
   res.write(head + splitPoint)
 
-  const { client } = props
-
   const pathname = req.path
+
   // make the router render the correct view
   client.state.location = {
     pathname,
