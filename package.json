@@ -1,9 +1,10 @@
 {
-  "name": "@hyperconnect/server",
+  "name": "@hypercnt/server",
   "version": "0.0.1",
   "description": "action driven websocket/http server that connects to your hyperapp",
   "main": "dist/index.js",
-  "jsnext:main": "src/index.js",
+  "jsnext:main": "src/index.mjs",
+  "module": "src/index.mjs",
   "author": "Jascha Ehrenreich <jascha@jaeh.at>",
   "license": "MIT",
   "scripts": {
@@ -30,8 +31,8 @@
     "ws": "5.1.1"
   },
   "devDependencies": {
-    "@magic/test": "github:magic/test",
-    "rollup": "0.58.2",
+    "@magic/test": "github:magic/test#mjs",
+    "rollup": "0.59.1",
     "rollup-plugin-jsx": "1.0.3",
     "rollup-plugin-node-resolve": "3.3.0"
   }
