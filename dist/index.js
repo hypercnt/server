@@ -1,13 +1,17 @@
 'use strict';
 
+Object.defineProperty(exports, '__esModule', { value: true });
+
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var ws = require('ws');
+var log = _interopDefault(require('@magic/log'));
 var fs = _interopDefault(require('fs'));
 var path = _interopDefault(require('path'));
 var hyperapp = require('hyperapp');
 var render = require('@hyperapp/render');
 var express = _interopDefault(require('express'));
+var deep = _interopDefault(require('@magic/deep'));
 
 const flattenActions = a => {
   const b = {};
@@ -35,12 +39,20 @@ const mapActions = ({ actions, name }) => {
   return action
 };
 
-const { Server } = ws;
+const defaultProps = {
+  socket: {
+    host: 'localhost',
+    port: 3001,
+    protocol: 'ws',
+    actions: {},
+  },
+};
 
-const init = async props => {
-  const server = await new Server(props);
+const socket$1 = props => {
+  props = { ...defaultProps, ...props };
+  const server = new ws.Server(props.socket);
 
-  server.on('connection', client => {
+  server.on('connection', (client, req) => {
     client.on('message', msg => {
       try {
         msg = JSON.parse(msg);
@@ -49,12 +61,13 @@ const init = async props => {
       }
 
       const [name, body] = msg;
-      console.log('receive', name, body);
+      log.info('receive', name, body, req);
 
       const request = {
+        req,
         name,
-        body,
         client,
+        body,
       };
 
       const response = {
@@ -65,7 +78,7 @@ const init = async props => {
             res.push(data);
           }
 
-          console.log('send', res);
+          log.info('send', res);
 
           client.send(JSON.stringify(res.filter(e => typeof e !== 'undefined')));
         },
@@ -77,6 +90,9 @@ const init = async props => {
         if (props.db) {
           response.db = props.db;
         }
+        if (props.jwt) {
+          response.jwt = props.jwt;
+        }
 
         action(request, response);
       } else {
@@ -85,7 +101,7 @@ const init = async props => {
     });
   });
 
-  console.log(`socket server listening on ${props.port}`);
+  log.info(`socket server listening on ${props.port}`);
   return server
 };
 
@@ -130,9 +146,7 @@ const routeActions = (props = {}) => {
     }
 
     if (typeof action === 'function') {
-      props.router.get(path$$1, (req, res) =>
-        res.end('GET not supported, use POST'),
-      );
+      props.router.get(path$$1, (req, res) => res.end('GET not supported, use POST'));
       props.router.post(path$$1, action);
     }
   });
@@ -162,20 +176,28 @@ global.window = {
   },
 };
 
-const defaultProps$1 = {
-  host: 'localhost',
-  port: 3000,
-  protocol: 'http',
-  actions: {},
-  serve: [
-    path.join(process.cwd(), 'dist'),
-    path.join(process.cwd(), 'src', 'client', 'assets'),
-  ],
+global.history = {
+  pushState: () => {},
+  replaceState: () => {},
 };
 
-const start = async (p = {}) => {
-  const props = Object.assign({}, defaultProps$1, p);
-  const { host, port, protocol, actions, serve, client } = props;
+const defaultProps$1 = {
+  http: {
+    host: 'localhost',
+    port: 3000,
+    protocol: 'http',
+    serve: [path.join(process.cwd(), 'dist'), path.join(process.cwd(), 'src', 'client', 'assets')],
+  },
+  actions: {},
+};
+
+const http$1 = (props = {}) => {
+  props = deep.merge(defaultProps$1, props);
+
+  console.log({ props });
+
+  const { actions, client } = props;
+  const { host, port, protocol, serve } = props.http;
 
   const app = express();
 
@@ -192,26 +214,35 @@ const start = async (p = {}) => {
       pathname: req.path,
     };
 
+    if (props.db) {
+      res.db = props.db;
+    }
+    if (props.jwt) {
+      res.jwt = props.jwt;
+    }
+
     next();
   });
 
   app.use(render$1(props));
 
-  app.listen(port, () => console.log(`http server listening to ${port}`));
+  app.listen(port, () => log.info(`http server listening to ${port}`));
   return app
 };
 
 const env = process.env.NODE_ENV || 'development';
 
-const init$1 = async (props = {}) => {
-  const socket = await init(props);
-  const http = await start(props);
+const init = async (props = {}) => {
+  const socketServer = await socket(props);
+  const httpServer = await http(props);
 
-  return { socket, http }
+  return { socket: socketServer, http: httpServer }
 };
 
-init$1.socket = init;
-init$1.http = start;
+init.socket = socket;
+init.http = http;
 
-module.exports = init$1;
+exports.default = init;
+exports.socket = socket$1;
+exports.http = http$1;
 //# sourceMappingURL=index.js.map

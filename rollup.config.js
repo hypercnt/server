@@ -8,7 +8,7 @@ const prod = env === 'production'
 const dev = env === 'development'
 
 module.exports = {
-  input: 'src/index.js',
+  input: 'src/index.mjs',
   output: {
     file: 'dist/index.js',
     name: 'server',
