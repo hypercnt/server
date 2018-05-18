@@ -2,9 +2,9 @@
   "name": "@hypercnt/server",
   "version": "0.0.1",
   "description": "action driven websocket/http server that connects to your hyperapp",
-  "main": "dist/index.js",
   "jsnext:main": "src/index.mjs",
   "module": "src/index.mjs",
+  "main": "src/index.mjs",
   "author": "Jascha Ehrenreich <jascha@jaeh.at>",
   "license": "MIT",
   "scripts": {
