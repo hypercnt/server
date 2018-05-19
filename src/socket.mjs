@@ -15,7 +15,7 @@ export const defaultProps = {
 }
 
 export const socket = args => {
-  const { actions, socket: conf } = deep.merge(defaultProps, args)
+  const { actions, socket: conf, db, jwt } = deep.merge(defaultProps, args)
   const server = new ws.Server(conf)
 
   server.on('connection', (client, req) => {
@@ -27,7 +27,7 @@ export const socket = args => {
       }
 
       const [name, body] = msg
-      log.info('receive', name, body, req)
+      log.info('receive', name, body)
 
       const request = {
         req,
