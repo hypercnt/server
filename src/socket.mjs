@@ -41,6 +41,13 @@ export const socket = args => {
           const res = [name.replace('v0.', '')]
 
           if (data) {
+            if (typeof data === 'number' || typeof data === 'string') {
+              data = {
+                data,
+                ok: true,
+              }
+            }
+
             res.push(data)
           }
 
