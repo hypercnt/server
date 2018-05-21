@@ -39,7 +39,6 @@ export const socket = args => {
       const response = {
         send: data => {
           const res = [name.replace('v0.', '')]
-
           if (data) {
             if (typeof data === 'number' || typeof data === 'string') {
               data = {
