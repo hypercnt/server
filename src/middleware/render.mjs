@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 
-import * as a from 'hyperapp'
+import { app } from '@hypercnt/client'
 import * as r from '@hyperapp/render'
 
 let fp = path.join(process.cwd(), 'src', 'client', 'index.html')
@@ -18,15 +18,18 @@ export const render = client => (req, res) => {
   res.type('text/html')
   res.write(head + splitPoint)
 
-  const pathname = req.path
+  const pathname = req.path || '/'
+
+  console.log(req._parsedUrl.pathname)
 
   // make the router render the correct view
-  client.state.location = {
+  client.state.router = {
     pathname,
     prev: pathname,
   }
 
-  const main = r.withRender(a.app)(client.state, client.actions, client.view)
+  const main = r.withRender(app)(client.state, client.actions, client.view)
+
   const stream = main.toStream()
 
   stream.pipe(res, { end: false })
