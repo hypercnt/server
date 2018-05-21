@@ -6,19 +6,6 @@ import deep from '@magic/deep'
 
 import { render, routes } from './middleware'
 
-// this is needed for ssr rendering.
-// if window is not set rendering will throw
-global.window = {
-  location: {
-    pathname: '/',
-  },
-}
-
-global.history = {
-  pushState: () => {},
-  replaceState: () => {},
-}
-
 export const defaultProps = {
   http: {
     host: 'localhost',
@@ -45,11 +32,6 @@ export const http = (props = {}) => {
   app.use('/api', routes({ actions }))
 
   app.use((req, res, next) => {
-    // this is needed for ssr rendering the hyperapp/routes
-    global.window.location = {
-      pathname: req.path,
-    }
-
     if (props.db) {
       res.db = props.db
     }
