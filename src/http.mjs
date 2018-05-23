@@ -1,6 +1,6 @@
-import express from 'express'
 import path from 'path'
 
+import express from 'express'
 import log from '@magic/log'
 import deep from '@magic/deep'
 
@@ -24,7 +24,12 @@ export const http = (props = {}) => {
 
   const app = express()
 
-  serve.forEach(p => app.use(express.static(p, { index: 'index.html' })))
+  const staticOptions = {
+    index: 'index.html',
+    immutable: true,
+    maxAge: 60 * 60,
+  }
+  serve.forEach(p => app.use(express.static(p, staticOptions)))
 
   app.use(express.urlencoded({ extended: true }))
   app.use(express.json())
