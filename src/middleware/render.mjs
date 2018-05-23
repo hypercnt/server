@@ -20,8 +20,6 @@ export const render = client => (req, res) => {
 
   const pathname = req.path || '/'
 
-  console.log(req._parsedUrl.pathname)
-
   // make the router render the correct view
   client.state.router = {
     pathname,
