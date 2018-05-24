@@ -25,7 +25,7 @@ const routeActions = (props = {}) => {
 export const routes = ({ actions }) => {
   // define the home route
   router.get('/', (req, res) => {
-    res.redirect('/v0')
+    res.redirect('/api/v0')
   })
 
   router.get('/v0', (req, res) => {
